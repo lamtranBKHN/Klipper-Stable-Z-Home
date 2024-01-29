@@ -68,7 +68,7 @@ class StableZHome:
                 logging.exception("Exception running pre-home script")
                 raise self.gcode.error('Pre-home Gcode failed')
 
-            self.gcode.run_script_from_command('G28 Z')
+            self.gcode.run_script_from_command('G28 Z FAST')
 
             mcu_position_offset = -stepper.mcu_to_commanded_position(0)
             mcu_pos = stepper.get_commanded_position() + mcu_position_offset
@@ -87,6 +87,8 @@ class StableZHome:
 
             if window_range is not None and window_range <= retry_tolerance:
                 self.gcode.respond_info('Succeeded\n')
+                self.gcode.run_script_from_command('G90')
+                self.gcode.run_script_from_command('G1 Z30')
                 break
 
             retries += 1
